@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.weather.WeatherController">
+    <ComboBox fx:id="cityComboBox" promptText="Введите город" onKeyReleased="#suggestCities"/>
+    <Button text="Получить погоду" onAction="#searchWeather" />
+    <Label fx:id="weatherInfoLabel" />
+</VBox>
+
