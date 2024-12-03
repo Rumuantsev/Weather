@@ -51,25 +51,31 @@ public class CitySuggestionService {
                 JsonArray jsonArray = JsonParser.parseString(response.toString()).getAsJsonArray();
                 List<String> newSuggestions = new ArrayList<>();
 
+                if (jsonArray.size() == 0) {
+                    // Если массив пуст, значит город не найден, очищаем список
+                    Platform.runLater(() -> {
+                        cityComboBox.getItems().clear();
+                    });
+                    return;
+                }
+
                 for (int i = 0; i < jsonArray.size(); i++) {
                     JsonObject cityObj = jsonArray.get(i).getAsJsonObject();
                     String cityName = cityObj.get("name").getAsString();
                     String country = cityObj.has("country") ? cityObj.get("country").getAsString() : "";
                     String fullCity = cityName + (country.isEmpty() ? "" : ", " + country);
 
+                    // Проверяем, если город уже добавлен в список предложений
                     if (!suggestedCities.contains(fullCity)) {
                         newSuggestions.add(fullCity);
                         suggestedCities.add(fullCity);
                     }
                 }
 
+                // Обновляем ComboBox в JavaFX потоке
                 Platform.runLater(() -> {
                     cityComboBox.getItems().clear();
                     cityComboBox.getItems().addAll(newSuggestions);
-                    // Если нет новых предложений, можно показать все возможные города
-                    if (newSuggestions.isEmpty()) {
-
-                    }
                 });
 
             } catch (Exception e) {

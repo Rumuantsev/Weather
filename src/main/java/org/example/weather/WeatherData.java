@@ -10,11 +10,13 @@ public class WeatherData {
     private double windSpeed;
     private String windDirection;
     private String weatherIcon;
+    private String cloudiness;  // Облачность
+    private double precipitation;  // Осадки
 
     // Конструктор
     public WeatherData(double temperature, double feelsLike, double tempMin, double tempMax,
                        int humidity, int pressure, double windSpeed,
-                       String windDirection, String weatherIcon) {
+                       String windDirection, String weatherIcon, String cloudiness, double precipitation) {
         this.temperature = temperature;
         this.feelsLike = feelsLike;
         this.tempMin = tempMin;
@@ -24,6 +26,8 @@ public class WeatherData {
         this.windSpeed = windSpeed;
         this.windDirection = windDirection;
         this.weatherIcon = weatherIcon;
+        this.cloudiness = cloudiness;
+        this.precipitation = precipitation;
     }
 
     // Геттеры
@@ -63,6 +67,14 @@ public class WeatherData {
         return weatherIcon;
     }
 
+    public String getCloudiness() {
+        return cloudiness;  // Геттер для облачности
+    }
+
+    public double getPrecipitation() {
+        return precipitation;  // Геттер для осадков
+    }
+
     // Сеттеры
     public void setTemperature(double temperature) {
         this.temperature = temperature;
@@ -98,5 +110,13 @@ public class WeatherData {
 
     public void setWeatherIcon(String weatherIcon) {
         this.weatherIcon = weatherIcon;
+    }
+
+    public void setCloudiness(String cloudiness) {
+        this.cloudiness = cloudiness;  // Сеттер для облачности
+    }
+
+    public void setPrecipitation(double precipitation) {
+        this.precipitation = precipitation;  // Сеттер для осадков
     }
 }

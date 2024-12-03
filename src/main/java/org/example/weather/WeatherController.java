@@ -21,6 +21,7 @@ public class WeatherController {
 
     @FXML
     public void initialize() {
+        // Загрузить последний искомый город
         String lastCity = databaseUtil.getLastSearchedCity();
         if (lastCity != null) {
             cityComboBox.setValue(lastCity);
@@ -44,9 +45,8 @@ public class WeatherController {
     @FXML
     public void searchWeather() {
         String city = cityComboBox.getValue();
-        System.out.println("Получен город: " + city);
         if (city != null && !city.trim().isEmpty()) {
-            searchWeather(city);
+            searchWeather(city);  // Запросить погоду для введенного города
         } else {
             showAlert("Ошибка", "Пожалуйста, введите название города.");
         }
@@ -55,8 +55,8 @@ public class WeatherController {
     private void searchWeather(String city) {
         try {
             WeatherData weatherData = weatherService.getWeatherByCity(city);
-            displayWeatherInfo(weatherData);
-            databaseUtil.saveCityToDatabase(city);
+            displayWeatherInfo(weatherData);  // Отобразить информацию о погоде
+            databaseUtil.saveCityToDatabase(city);  // Сохранить город в базе данных
         } catch (CityNotFoundException e) {
             showAlert("Ошибка", e.getMessage());
         } catch (Exception e) {
@@ -65,11 +65,31 @@ public class WeatherController {
     }
 
     private void displayWeatherInfo(WeatherData weatherData) {
-        String weatherInfo = String.format("Температура: %.1f°C\nОщущается как: %.1f°C\nМакс: %.1f°C\nМин: %.1f°C\nВлажность: %d%%\nДавление: %d гПа\nСкорость ветра: %.1f м/с\nНаправление ветра: %s",
-                weatherData.getTemperature(), weatherData.getFeelsLike(), weatherData.getTempMax(),
-                weatherData.getTempMin(), weatherData.getHumidity(), weatherData.getPressure(),
-                weatherData.getWindSpeed(), weatherData.getWindDirection());
-        weatherInfoLabel.setText(weatherInfo);
+        String weatherInfo = String.format(
+                "Температура: %.1f°C\n" +
+                        "Ощущается как: %.1f°C\n" +
+                        "Макс: %.1f°C\n" +
+                        "Мин: %.1f°C\n" +
+                        "Влажность: %d%%\n" +
+                        "Давление: %d гПа\n" +
+                        "Скорость ветра: %.1f м/с\n" +
+                        "Направление ветра: %s\n" +
+                        "Облачность: %s\n" +
+                        "Осадки: %.1f мм",
+                weatherData.getTemperature(),
+                weatherData.getFeelsLike(),
+                weatherData.getTempMax(),
+                weatherData.getTempMin(),
+                weatherData.getHumidity(),
+                weatherData.getPressure(),
+                weatherData.getWindSpeed(),
+                weatherData.getWindDirection(),
+                weatherData.getCloudiness(),
+                weatherData.getPrecipitation());  // Предполагается, что эти методы существуют
+
+        weatherInfoLabel.setText(weatherInfo);  // Устанавливаем текст для label
+
+        // Загружаем иконку погоды
         String iconUrl = "http://openweathermap.org/img/wn/" + weatherData.getWeatherIcon() + "@2x.png";
         Image image = new Image(iconUrl);
         weatherIcon.setImage(image);

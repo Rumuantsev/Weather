@@ -8,4 +8,10 @@
     <Button text="Получить погоду" onAction="#searchWeather" style="-fx-background-color: #555555; -fx-text-fill: white;" />
     <Label fx:id="weatherInfoLabel" wrapText="true" style="-fx-text-fill: white;" />
     <ImageView fx:id="weatherIcon" fitWidth="100" fitHeight="100" preserveRatio="true" />
+
+    <!-- Forecast Section -->
+    <VBox fx:id="forecastContainer" spacing="10" style="-fx-background-color: #333333; -fx-padding: 10;">
+        <Label text="Прогноз погоды на следующие 4 дня:" style="-fx-text-fill: white;" />
+        <VBox fx:id="forecastVBox" spacing="5" />
+    </VBox>
 </VBox>

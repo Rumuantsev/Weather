@@ -60,7 +60,11 @@ public class WeatherService {
             JsonArray weatherArray = jsonObject.getAsJsonArray("weather");
             String weatherIcon = weatherArray.get(0).getAsJsonObject().get("icon").getAsString();
 
-            WeatherData weatherData = new WeatherData(temperature, feelsLike, tempMin, tempMax, humidity, pressure, windSpeed, windDirection, weatherIcon);
+            // Обработка облачности и осадков
+            String cloudiness = jsonObject.getAsJsonObject("clouds").get("all").getAsString(); // Процент облачности
+            double precipitation = jsonObject.has("rain") ? jsonObject.getAsJsonObject("rain").get("1h").getAsDouble() : 0; // Осадки за последний час (в мм)
+
+            WeatherData weatherData = new WeatherData(temperature, feelsLike, tempMin, tempMax, humidity, pressure, windSpeed, windDirection, weatherIcon, cloudiness, precipitation);
             return weatherData;
 
         } catch (Exception e) {
@@ -68,5 +72,4 @@ public class WeatherService {
             throw new CityNotFoundException("Error fetching weather data");
         }
     }
-
 }
