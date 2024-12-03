@@ -14,6 +14,14 @@ public class WeatherController {
     private Label weatherInfoLabel;
     @FXML
     private ImageView weatherIcon;
+    @FXML
+    public void suggestCities() {
+        String query = cityComboBox.getEditor().getText();
+        if (query != null && !query.trim().isEmpty()) {
+            citySuggestionService.suggestCities(query, cityComboBox);
+        }
+    }
+
 
     private WeatherService weatherService = new WeatherService();
     private DatabaseUtil databaseUtil = new DatabaseUtil();
@@ -41,7 +49,7 @@ public class WeatherController {
     private void searchWeather(String city) {
         try {
             WeatherData weatherData = weatherService.getWeatherByCity(city);
-            databaseUtil.saveCity(city);
+            databaseUtil.saveCity(city); // Сохранение города
             displayWeatherInfo(weatherData);
         } catch (CityNotFoundException e) {
             showAlert("Ошибка", e.getMessage());
@@ -50,11 +58,6 @@ public class WeatherController {
         }
     }
 
-    @FXML
-    public void suggestCities() {
-        String query = cityComboBox.getEditor().getText();
-        citySuggestionService.suggestCities(query, cityComboBox);
-    }
 
     private void displayWeatherInfo(WeatherData weatherData) {
         String weatherInfo = String.format("Температура: %.1f°C\nОщущается как: %.1f°C\nМакс: %.1f°C\nМин: %.1f°C\nВлажность: %d%%\nДавление: %d гПа\nСкорость ветра: %.1f м/с\nНаправление ветра: %s",

@@ -1,37 +1,29 @@
 package org.example.weather;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException; // Импортируем SQLException
+import java.io.*;
+import java.util.Properties;
 
 public class DatabaseUtil {
-    private static final String URL = "jdbc:postgresql://localhost:5433/weather";
-    private static final String USER = "postgres";
-    private static final String PASSWORD = "251925";
+    private static final String SETTINGS_FILE = "settings.properties";
 
-    public void saveCity(String city) throws SQLException { // Изменяем исключение на SQLException
-        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
-            String sql = "INSERT INTO cities (name) VALUES (?) ON CONFLICT (name) DO NOTHING";
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setString(1, city);
-                statement.executeUpdate();
-            }
+    public void saveCity(String city) {
+        try (FileOutputStream fos = new FileOutputStream(SETTINGS_FILE)) {
+            Properties properties = new Properties();
+            properties.setProperty("lastCity", city);
+            properties.store(fos, null);
+        } catch (IOException e) {
+            System.err.println("Ошибка при сохранении города: " + e.getMessage());
         }
     }
 
-    public String getLastSearchedCity() throws SQLException { // Изменяем исключение на SQLException
-        String lastCity = null;
-        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
-            String sql = "SELECT name FROM cities ORDER BY id DESC LIMIT 1"; // Предполагая, что 'id' является первичным ключом
-            try (PreparedStatement statement = connection.prepareStatement(sql);
-                 ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    lastCity = resultSet.getString("name");
-                }
-            }
+    public String getLastSearchedCity() {
+        try (FileInputStream fis = new FileInputStream(SETTINGS_FILE)) {
+            Properties properties = new Properties();
+            properties.load(fis);
+            return properties.getProperty("lastCity");
+        } catch (IOException e) {
+            System.err.println("Ошибка при загрузке города: " + e.getMessage());
         }
-        return lastCity;
+        return null;
     }
 }

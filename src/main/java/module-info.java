@@ -3,9 +3,8 @@ module org.example.weather {
     requires javafx.fxml;
     requires com.google.gson;
     requires org.slf4j;
-    requires lombok;
     requires java.sql;
-    requires java.desktop; // Добавлено для использования java.awt
+    requires java.desktop;
 
     opens org.example.weather to javafx.fxml;
     exports org.example.weather;
