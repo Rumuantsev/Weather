@@ -16,12 +16,14 @@ import java.util.List;
 import java.util.Set;
 
 public class CitySuggestionService {
-    private static final String API_KEY = "559a014acf069376bfe96d4085734259";
+    private static final String API_KEY = "559a014acf069376bfe96d4085734259"; // Замените на свой API ключ
     private static final String GEOCODING_URL = "http://api.openweathermap.org/geo/1.0/direct";
-    private final Set<String> suggestedCities = new HashSet<>(); // Хранение уникальных городов
+    private final Set<String> suggestedCities = new HashSet<>();
 
     public void suggestCities(String query, ComboBox<String> cityComboBox) {
         if (query == null || query.isEmpty()) {
+            // Если запрос пустой, очищаем элементы ComboBox
+            cityComboBox.getItems().clear();
             return;
         }
 
@@ -31,15 +33,16 @@ public class CitySuggestionService {
                 URL url = new URL(urlStr);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
-
                 int responseCode = conn.getResponseCode();
+
                 if (responseCode != 200) {
-                    return;
+                    return; // Обработка ошибок, если необходимо
                 }
 
                 BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 StringBuilder response = new StringBuilder();
                 String inputLine;
+
                 while ((inputLine = in.readLine()) != null) {
                     response.append(inputLine);
                 }
@@ -47,13 +50,13 @@ public class CitySuggestionService {
 
                 JsonArray jsonArray = JsonParser.parseString(response.toString()).getAsJsonArray();
                 List<String> newSuggestions = new ArrayList<>();
+
                 for (int i = 0; i < jsonArray.size(); i++) {
                     JsonObject cityObj = jsonArray.get(i).getAsJsonObject();
                     String cityName = cityObj.get("name").getAsString();
                     String country = cityObj.has("country") ? cityObj.get("country").getAsString() : "";
                     String fullCity = cityName + (country.isEmpty() ? "" : ", " + country);
 
-                    // Проверяем на уникальность
                     if (!suggestedCities.contains(fullCity)) {
                         newSuggestions.add(fullCity);
                         suggestedCities.add(fullCity);
@@ -63,10 +66,14 @@ public class CitySuggestionService {
                 Platform.runLater(() -> {
                     cityComboBox.getItems().clear();
                     cityComboBox.getItems().addAll(newSuggestions);
+                    // Если нет новых предложений, можно показать все возможные города
+                    if (newSuggestions.isEmpty()) {
+
+                    }
                 });
 
             } catch (Exception e) {
-                e.printStackTrace();
+                e.printStackTrace(); // Обработка исключений по мере необходимости
             }
         }).start();
     }

@@ -21,33 +21,30 @@ public class WeatherController {
 
     @FXML
     public void initialize() {
-        if (!databaseUtil.testDatabaseConnection()) {
-            showAlert("Ошибка", "Не удалось подключиться к базе данных.");
-            return;
+        String lastCity = databaseUtil.getLastSearchedCity();
+        if (lastCity != null) {
+            cityComboBox.setValue(lastCity);
+            searchWeather(lastCity);
         }
 
-        try {
-            String lastCity = databaseUtil.getLastSearchedCity();
-            if (lastCity != null) {
-                cityComboBox.setValue(lastCity);
-                searchWeather(lastCity);
-            }
-        } catch (Exception e) {
-            showAlert("Ошибка", "Не удалось загрузить последний город.");
-        }
+        cityComboBox.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+            suggestCities(newValue);
+        });
     }
 
     @FXML
-    public void suggestCities() {
-        String query = cityComboBox.getEditor().getText();
+    public void suggestCities(String query) {
         if (query != null && !query.trim().isEmpty()) {
             citySuggestionService.suggestCities(query, cityComboBox);
+        } else {
+            cityComboBox.getItems().clear();
         }
     }
 
     @FXML
     public void searchWeather() {
         String city = cityComboBox.getValue();
+        System.out.println("Получен город: " + city);
         if (city != null && !city.trim().isEmpty()) {
             searchWeather(city);
         } else {
@@ -60,12 +57,10 @@ public class WeatherController {
             WeatherData weatherData = weatherService.getWeatherByCity(city);
             displayWeatherInfo(weatherData);
             databaseUtil.saveCityToDatabase(city);
-            System.out.println("Погода получена и город сохранен: " + city);
         } catch (CityNotFoundException e) {
             showAlert("Ошибка", e.getMessage());
         } catch (Exception e) {
             showAlert("Ошибка", "Не удалось получить данные о погоде: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -75,7 +70,6 @@ public class WeatherController {
                 weatherData.getTempMin(), weatherData.getHumidity(), weatherData.getPressure(),
                 weatherData.getWindSpeed(), weatherData.getWindDirection());
         weatherInfoLabel.setText(weatherInfo);
-
         String iconUrl = "http://openweathermap.org/img/wn/" + weatherData.getWeatherIcon() + "@2x.png";
         Image image = new Image(iconUrl);
         weatherIcon.setImage(image);

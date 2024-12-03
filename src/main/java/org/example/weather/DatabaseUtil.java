@@ -8,12 +8,13 @@ public class DatabaseUtil {
     private static final String PASSWORD = "251925";
 
     public void saveCityToDatabase(String city) {
+        String normalizedCity = city.toLowerCase(); // Преобразуем имя города в нижний регистр
         String insertQuery = "INSERT INTO weather (name) VALUES (?) ON CONFLICT (name) DO NOTHING";
 
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
             System.out.println("Подключение к базе данных успешно.");
             try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
-                preparedStatement.setString(1, city);
+                preparedStatement.setString(1, normalizedCity);
                 int rowsAffected = preparedStatement.executeUpdate();
 
                 if (rowsAffected > 0) {

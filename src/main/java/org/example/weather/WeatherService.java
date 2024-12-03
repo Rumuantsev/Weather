@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 
 public class WeatherService {
     private static final String API_KEY = "559a014acf069376bfe96d4085734259";
@@ -18,14 +19,21 @@ public class WeatherService {
 
     public WeatherData getWeatherByCity(String city) throws CityNotFoundException {
         try {
-            String urlStr = BASE_URL + "?q=" + city + "&appid=" + API_KEY + "&units=metric";
+            String urlStr = BASE_URL + "?q=" + URLEncoder.encode(city, "UTF-8") + "&appid=" + API_KEY + "&units=metric";
             URL url = new URL(urlStr);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
 
             int responseCode = conn.getResponseCode();
             if (responseCode != 200) {
-                throw new CityNotFoundException("City not found: " + city);
+                BufferedReader errorReader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+                StringBuilder errorResponse = new StringBuilder();
+                String errorLine;
+                while ((errorLine = errorReader.readLine()) != null) {
+                    errorResponse.append(errorLine);
+                }
+                errorReader.close();
+                throw new CityNotFoundException("City not found: " + city + " - Response: " + errorResponse.toString());
             }
 
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -49,11 +57,9 @@ public class WeatherService {
             double windSpeed = wind.get("speed").getAsDouble();
             String windDirection = wind.get("deg").getAsString(); // Преобразуйте в сторону ветра, если нужно
 
-            // Получить массив погоды
             JsonArray weatherArray = jsonObject.getAsJsonArray("weather");
-            String weatherIcon = weatherArray.get(0).getAsJsonObject().get("icon").getAsString(); // Получить код иконки погоды
+            String weatherIcon = weatherArray.get(0).getAsJsonObject().get("icon").getAsString();
 
-            // Создание объекта WeatherData с добавленным параметром weatherIcon
             WeatherData weatherData = new WeatherData(temperature, feelsLike, tempMin, tempMax, humidity, pressure, windSpeed, windDirection, weatherIcon);
             return weatherData;
 
@@ -62,4 +68,5 @@ public class WeatherService {
             throw new CityNotFoundException("Error fetching weather data");
         }
     }
+
 }

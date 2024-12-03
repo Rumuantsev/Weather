@@ -3,9 +3,9 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.weather.WeatherController" spacing="10" alignment="CENTER">
-    <ComboBox fx:id="cityComboBox" promptText="Введите город" onKeyReleased="#suggestCities" editable="true" />
-    <Button text="Получить погоду" onAction="#searchWeather" />
-    <Label fx:id="weatherInfoLabel" wrapText="true" />
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.weather.WeatherController" spacing="10" alignment="CENTER" style="-fx-background-color: #2E2E2E; -fx-padding: 20;">
+    <ComboBox fx:id="cityComboBox" promptText="Введите город" editable="true" style="-fx-background-color: #444444; -fx-text-fill: white;" />
+    <Button text="Получить погоду" onAction="#searchWeather" style="-fx-background-color: #555555; -fx-text-fill: white;" />
+    <Label fx:id="weatherInfoLabel" wrapText="true" style="-fx-text-fill: white;" />
     <ImageView fx:id="weatherIcon" fitWidth="100" fitHeight="100" preserveRatio="true" />
 </VBox>
