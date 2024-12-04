@@ -74,49 +74,4 @@ public class WeatherData {
     public double getPrecipitation() {
         return precipitation;  // Геттер для осадков
     }
-
-    // Сеттеры
-    public void setTemperature(double temperature) {
-        this.temperature = temperature;
-    }
-
-    public void setFeelsLike(double feelsLike) {
-        this.feelsLike = feelsLike;
-    }
-
-    public void setTempMin(double tempMin) {
-        this.tempMin = tempMin;
-    }
-
-    public void setTempMax(double tempMax) {
-        this.tempMax = tempMax;
-    }
-
-    public void setHumidity(int humidity) {
-        this.humidity = humidity;
-    }
-
-    public void setPressure(int pressure) {
-        this.pressure = pressure;
-    }
-
-    public void setWindSpeed(double windSpeed) {
-        this.windSpeed = windSpeed;
-    }
-
-    public void setWindDirection(String windDirection) {
-        this.windDirection = windDirection;
-    }
-
-    public void setWeatherIcon(String weatherIcon) {
-        this.weatherIcon = weatherIcon;
-    }
-
-    public void setCloudiness(String cloudiness) {
-        this.cloudiness = cloudiness;  // Сеттер для облачности
-    }
-
-    public void setPrecipitation(double precipitation) {
-        this.precipitation = precipitation;  // Сеттер для осадков
-    }
 }

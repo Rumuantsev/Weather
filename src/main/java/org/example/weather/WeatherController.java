@@ -6,6 +6,13 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class WeatherController {
     @FXML
@@ -14,6 +21,8 @@ public class WeatherController {
     private Label weatherInfoLabel;
     @FXML
     private ImageView weatherIcon;
+    @FXML
+    private VBox forecastVBox;
 
     private WeatherService weatherService = new WeatherService();
     private DatabaseUtil databaseUtil = new DatabaseUtil();
@@ -21,11 +30,10 @@ public class WeatherController {
 
     @FXML
     public void initialize() {
-        // Загрузить последний искомый город
         String lastCity = databaseUtil.getLastSearchedCity();
         if (lastCity != null) {
             cityComboBox.setValue(lastCity);
-            searchWeather(lastCity);
+            searchWeather();
         }
 
         cityComboBox.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
@@ -46,21 +54,21 @@ public class WeatherController {
     public void searchWeather() {
         String city = cityComboBox.getValue();
         if (city != null && !city.trim().isEmpty()) {
-            searchWeather(city);  // Запросить погоду для введенного города
+            try {
+                WeatherData weatherData = weatherService.getWeatherByCity(city);
+                displayWeatherInfo(weatherData);
+
+                ForecastData[] forecastDataArray = weatherService.getForecastByCity(city);
+                displayForecast(forecastDataArray);
+
+                databaseUtil.saveCityToDatabase(city);
+            } catch (CityNotFoundException e) {
+                showAlert("Ошибка", e.getMessage());
+            } catch (Exception e) {
+                showAlert("Ошибка", "Не удалось получить данные о погоде: " + e.getMessage());
+            }
         } else {
             showAlert("Ошибка", "Пожалуйста, введите название города.");
-        }
-    }
-
-    private void searchWeather(String city) {
-        try {
-            WeatherData weatherData = weatherService.getWeatherByCity(city);
-            displayWeatherInfo(weatherData);  // Отобразить информацию о погоде
-            databaseUtil.saveCityToDatabase(city);  // Сохранить город в базе данных
-        } catch (CityNotFoundException e) {
-            showAlert("Ошибка", e.getMessage());
-        } catch (Exception e) {
-            showAlert("Ошибка", "Не удалось получить данные о погоде: " + e.getMessage());
         }
     }
 
@@ -85,19 +93,113 @@ public class WeatherController {
                 weatherData.getWindSpeed(),
                 weatherData.getWindDirection(),
                 weatherData.getCloudiness(),
-                weatherData.getPrecipitation());  // Предполагается, что эти методы существуют
+                weatherData.getPrecipitation());
 
-        weatherInfoLabel.setText(weatherInfo);  // Устанавливаем текст для label
+        weatherInfoLabel.setText(weatherInfo);
 
-        // Загружаем иконку погоды
         String iconUrl = "http://openweathermap.org/img/wn/" + weatherData.getWeatherIcon() + "@2x.png";
         Image image = new Image(iconUrl);
         weatherIcon.setImage(image);
     }
 
+    private void displayForecast(ForecastData[] forecastDataArray) {
+        forecastVBox.getChildren().clear();
+
+        List<ForecastData> dailyForecast = getDailyForecast(forecastDataArray);
+
+        for (ForecastData forecastData : dailyForecast) {
+            VBox forecastDetails = new VBox();
+            forecastDetails.setSpacing(5);
+            forecastDetails.setStyle("-fx-background-color: #444444; -fx-padding: 10; -fx-background-radius: 5;");
+
+            // Форматирование даты
+            Label dateLabel = new Label(forecastData.getDate().format(DateTimeFormatter.ofPattern("dd.MM")));
+            dateLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
+
+            // Статус
+            Label statusLabel = new Label("Статус: " + forecastData.getStatus());
+            statusLabel.setStyle("-fx-text-fill: white;");
+
+            // Средняя, максимальная и минимальная температуры
+            Label averageTempLabel = new Label(String.format("Средняя температура: %.1f°C", forecastData.getAverageTemperature()));
+            averageTempLabel.setStyle("-fx-text-fill: white;");
+
+            Label maxTempLabel = new Label(String.format("Макс: %.1f°C", forecastData.getMaxTemperature()));
+            maxTempLabel.setStyle("-fx-text-fill: white;");
+
+            Label minTempLabel = new Label(String.format("Мин: %.1f°C", forecastData.getMinTemperature()));
+            minTempLabel.setStyle("-fx-text-fill: white;");
+
+            // Иконка
+            String iconUrl = "http://openweathermap.org/img/wn/" + forecastData.getWeatherIcon() + "@2x.png";
+            ImageView icon = new ImageView();
+            try {
+                Image image = new Image(iconUrl, true); // true для async загрузки
+                icon.setImage(image);
+                if (image.isError()) {
+                    System.out.println("Ошибка загрузки иконки: " + iconUrl);
+                }
+            } catch (Exception e) {
+                System.out.println("Не удалось загрузить иконку: " + iconUrl);
+                e.printStackTrace(); // Вывод ошибки в консоль
+                showAlert("Ошибка", "Не удалось загрузить иконку погоды: " + e.getMessage());
+            }
+
+            icon.setFitWidth(50);
+            icon.setFitHeight(50);
+            icon.setPreserveRatio(true);
+
+            // Добавление всех элементов в VBox
+            forecastDetails.getChildren().addAll(dateLabel, statusLabel, averageTempLabel, maxTempLabel, minTempLabel, icon);
+
+            // Добавление VBox в основной VBox
+            forecastVBox.getChildren().add(forecastDetails);
+
+            // Добавление информации о прогнозе в виде строки
+            System.out.println(forecastDataToString(forecastData));
+        }
+    }
+
+    // Метод для преобразования объекта ForecastData в строку
+    private String forecastDataToString(ForecastData forecastData) {
+        return String.format("%s: %s, %.1f°C (%.1f°C / %.1f°C)",
+                forecastData.getDate().format(DateTimeFormatter.ofPattern("dd.MM")),
+                forecastData.getStatus(),
+                forecastData.getAverageTemperature(),
+                forecastData.getMaxTemperature(),
+                forecastData.getMinTemperature());
+    }
+
+    private List<ForecastData> getDailyForecast(ForecastData[] forecastDataArray) {
+        LocalDate tomorrow = LocalDate.now().plusDays(1); // Завтрашний день
+
+        // Получаем прогнозы на завтрашний день и следующие три дня
+        List<ForecastData> forecastList = java.util.Arrays.stream(forecastDataArray)
+                .filter(data -> !data.getDate().toLocalDate().isBefore(tomorrow)) // Прогноз на завтра и позже
+                .collect(Collectors.toMap(
+                        data -> data.getDate().toLocalDate(), // Ключ - дата прогноза
+                        data -> data, // Значение - сам прогноз
+                        (existing, replacement) -> existing)) // Если есть дубликаты, оставляем первый
+                .values()
+                .stream()
+                .sorted(Comparator.comparing(data -> data.getDate().toLocalDate())) // Сортируем по возрастанию даты
+                .limit(4) // Ограничиваем результат первыми четырьмя днями
+                .collect(Collectors.toList());
+
+        // Выводим результат
+        System.out.println("Итоговый список прогнозов (в порядке возрастания):");
+        forecastList.forEach(forecast ->
+                System.out.println("Дата: " + forecast.getDate() + ", Прогноз: " + forecast) // Печатаем прогнозы
+        );
+
+        return forecastList;
+    }
+
     private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR, message);
+        Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
         alert.showAndWait();
     }
 }
