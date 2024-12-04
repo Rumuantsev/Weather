@@ -45,8 +45,8 @@ public class WeatherService {
 
             return new WeatherData(temperature, feelsLike, tempMin, tempMax, humidity, pressure, windSpeed, windDirection, weatherIcon, cloudiness, precipitation);
         } catch (Exception e) {
-            logger.error("Error getting weather data", e);
-            throw new CityNotFoundException("Error fetching weather data");
+            logger.error("Ошибка получения данных о погоде", e);
+            throw new CityNotFoundException("Ошибка при получении данных о погоде.");
         }
     }
 
@@ -79,8 +79,8 @@ public class WeatherService {
 
             return forecastDataArray;
         } catch (Exception e) {
-            logger.error("Error getting forecast data", e);
-            throw new CityNotFoundException("Error fetching forecast data");
+            logger.error("Ошибка получения данных о погоде", e);
+            throw new CityNotFoundException("Ошибка при получении данных о погоде.");
         }
     }
 
@@ -92,7 +92,7 @@ public class WeatherService {
 
         int responseCode = conn.getResponseCode();
         if (responseCode != 200) {
-            throw new CityNotFoundException("City not found or API error. Response code: " + responseCode);
+            throw new CityNotFoundException("Город не найден или ошибка API. Код ответа: " + responseCode);
         }
 
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));

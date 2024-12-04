@@ -6,6 +6,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox; // Импорт HBox вместо VBox
 import javafx.scene.layout.VBox;
 
 import java.time.LocalDate;
@@ -22,7 +23,7 @@ public class WeatherController {
     @FXML
     private ImageView weatherIcon;
     @FXML
-    private VBox forecastVBox;
+    private HBox forecastHBox; // Изменено на HBox
 
     private WeatherService weatherService = new WeatherService();
     private DatabaseUtil databaseUtil = new DatabaseUtil();
@@ -103,7 +104,7 @@ public class WeatherController {
     }
 
     private void displayForecast(ForecastData[] forecastDataArray) {
-        forecastVBox.getChildren().clear();
+        forecastHBox.getChildren().clear(); // Очистка HBox перед добавлением новых элементов
 
         List<ForecastData> dailyForecast = getDailyForecast(forecastDataArray);
 
@@ -152,15 +153,14 @@ public class WeatherController {
             // Добавление всех элементов в VBox
             forecastDetails.getChildren().addAll(dateLabel, statusLabel, averageTempLabel, maxTempLabel, minTempLabel, icon);
 
-            // Добавление VBox в основной VBox
-            forecastVBox.getChildren().add(forecastDetails);
+            // Добавление VBox в HBox
+            forecastHBox.getChildren().add(forecastDetails);
 
             // Добавление информации о прогнозе в виде строки
             System.out.println(forecastDataToString(forecastData));
         }
     }
 
-    // Метод для преобразования объекта ForecastData в строку
     private String forecastDataToString(ForecastData forecastData) {
         return String.format("%s: %s, %.1f°C (%.1f°C / %.1f°C)",
                 forecastData.getDate().format(DateTimeFormatter.ofPattern("dd.MM")),
@@ -185,12 +185,6 @@ public class WeatherController {
                 .sorted(Comparator.comparing(data -> data.getDate().toLocalDate())) // Сортируем по возрастанию даты
                 .limit(4) // Ограничиваем результат первыми четырьмя днями
                 .collect(Collectors.toList());
-
-        // Выводим результат
-        System.out.println("Итоговый список прогнозов (в порядке возрастания):");
-        forecastList.forEach(forecast ->
-                System.out.println("Дата: " + forecast.getDate() + ", Прогноз: " + forecast) // Печатаем прогнозы
-        );
 
         return forecastList;
     }

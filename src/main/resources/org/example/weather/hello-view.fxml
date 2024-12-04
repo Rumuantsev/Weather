@@ -4,7 +4,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 
-<HBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.weather.WeatherController" spacing="20" alignment="CENTER" style="-fx-background-color: #2E2E2E; -fx-padding: 20;">
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.weather.WeatherController" spacing="20" alignment="CENTER" style="-fx-background-color: #2E2E2E; -fx-padding: 20;">
     <!-- Левая часть: получение погоды и текущая погода -->
     <VBox spacing="10" alignment="CENTER" style="-fx-background-color: #2E2E2E;">
         <ComboBox fx:id="cityComboBox" promptText="Введите город" editable="true" style="-fx-background-color: #444444; -fx-text-fill: white;" />
@@ -13,11 +13,9 @@
         <ImageView fx:id="weatherIcon" fitWidth="100" fitHeight="100" preserveRatio="true" />
     </VBox>
 
-    <!-- Правая часть: прогноз на 4 дня -->
-    <ScrollPane style="-fx-background: #2E2E2E; -fx-border-color: #2E2E2E;">
-        <VBox fx:id="forecastContainer" spacing="10" style="-fx-background-color: #333333; -fx-padding: 10;">
-            <Label text="Прогноз погоды на следующие 4 дня:" style="-fx-text-fill: white; -fx-font-weight: bold;" />
-            <VBox fx:id="forecastVBox" spacing="5" />
-        </VBox>
-    </ScrollPane>
-</HBox>
+    <!-- Прогноз на 4 дня в горизонтальном расположении -->
+    <Label text="Прогноз погоды на следующие 4 дня:" style="-fx-text-fill: white; -fx-font-weight: bold;" />
+    <HBox fx:id="forecastHBox" spacing="20" alignment="CENTER" style="-fx-background-color: #333333; -fx-padding: 10;">
+        <!-- Здесь будут добавляться элементы прогноза для каждого дня -->
+    </HBox>
+</VBox>
