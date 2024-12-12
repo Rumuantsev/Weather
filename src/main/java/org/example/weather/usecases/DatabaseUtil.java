@@ -1,4 +1,4 @@
-package org.example.weather;
+package org.example.weather.usecases;
 
 import java.sql.*;
 

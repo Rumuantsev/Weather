@@ -1,4 +1,4 @@
-package org.example.weather;
+package org.example.weather.usecases;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 public class CitySuggestionService {
-    private static final String API_KEY = "559a014acf069376bfe96d4085734259"; // Замените на свой API ключ
+    private static final String API_KEY = "559a014acf069376bfe96d4085734259";
     private static final String GEOCODING_URL = "http://api.openweathermap.org/geo/1.0/direct";
     private final Set<String> suggestedCities = new HashSet<>();
 

@@ -14,6 +14,11 @@ public class HelloApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 900, 700);
         stage.setTitle("Приложение погоды");
         stage.setScene(scene);
+
+        // Устанавливаем минимальные размеры окна
+        stage.setMinWidth(600);
+        stage.setMinHeight(500);
+
         stage.show();
     }
 

@@ -1,4 +1,4 @@
-package org.example.weather;
+package org.example.weather.domain;
 
 import java.time.LocalDateTime;
 

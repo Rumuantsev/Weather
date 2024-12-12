@@ -4,7 +4,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.weather.WeatherController" spacing="20" alignment="CENTER" style="-fx-background-color: #2E2E2E; -fx-padding: 20;">
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.weather.controllers.WeatherController" spacing="20" alignment="CENTER" style="-fx-background-color: #2E2E2E; -fx-padding: 20;">
     <!-- Левая часть: получение погоды и текущая погода -->
     <VBox spacing="10" alignment="CENTER" style="-fx-background-color: #2E2E2E;">
         <ComboBox fx:id="cityComboBox" promptText="Введите город" editable="true" style="-fx-background-color: #444444; -fx-text-fill: white;" />

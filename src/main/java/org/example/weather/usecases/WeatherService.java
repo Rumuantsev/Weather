@@ -1,8 +1,11 @@
-package org.example.weather;
+package org.example.weather.usecases;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.example.weather.domain.CityNotFoundException;
+import org.example.weather.domain.ForecastData;
+import org.example.weather.domain.WeatherData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

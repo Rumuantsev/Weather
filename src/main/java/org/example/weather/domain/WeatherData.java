@@ -1,4 +1,4 @@
-package org.example.weather;
+package org.example.weather.domain;
 
 public class WeatherData {
     private double temperature;

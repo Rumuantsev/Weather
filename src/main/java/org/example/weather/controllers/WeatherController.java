@@ -1,4 +1,4 @@
-package org.example.weather;
+package org.example.weather.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -8,6 +8,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox; // Импорт HBox вместо VBox
 import javafx.scene.layout.VBox;
+import org.example.weather.domain.ForecastData;
+import org.example.weather.domain.WeatherData;
+import org.example.weather.domain.CityNotFoundException;
+import org.example.weather.usecases.CitySuggestionService;
+import org.example.weather.usecases.DatabaseUtil;
+import org.example.weather.usecases.WeatherService;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
