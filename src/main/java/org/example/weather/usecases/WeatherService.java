@@ -23,11 +23,14 @@ public class WeatherService {
     private static final String FORECAST_URL = "https://api.openweathermap.org/data/2.5/forecast";
     public static final Logger logger = LoggerFactory.getLogger(WeatherService.class);
 
+    // Метод получения текущей погоды по названию города
     public WeatherData getWeatherByCity(String city) throws CityNotFoundException {
         try {
+            // Формируем запрос с названием города
             String urlStr = BASE_URL + "?q=" + URLEncoder.encode(city, "UTF-8") + "&appid=" + API_KEY + "&units=metric";
             JsonObject jsonObject = makeApiCall(urlStr);
 
+            // Извлекаем основные данные о погоде из ответа
             JsonObject main = jsonObject.getAsJsonObject("main");
             double temperature = main.get("temp").getAsDouble();
             double feelsLike = main.get("feels_like").getAsDouble();
@@ -36,16 +39,19 @@ public class WeatherService {
             int humidity = main.get("humidity").getAsInt();
             int pressure = main.get("pressure").getAsInt();
 
+            // Извлекаем данные о ветре
             JsonObject wind = jsonObject.getAsJsonObject("wind");
             double windSpeed = wind.get("speed").getAsDouble();
             String windDirection = wind.get("deg").getAsString();
 
+            // Извлекаем иконку погоды и облачность
             JsonArray weatherArray = jsonObject.getAsJsonArray("weather");
             String weatherIcon = weatherArray.get(0).getAsJsonObject().get("icon").getAsString();
 
             String cloudiness = jsonObject.getAsJsonObject("clouds").get("all").getAsString();
             double precipitation = jsonObject.has("rain") ? jsonObject.getAsJsonObject("rain").get("1h").getAsDouble() : 0;
 
+            // Создаем объект WeatherData с извлеченными данными
             return new WeatherData(temperature, feelsLike, tempMin, tempMax, humidity, pressure, windSpeed, windDirection, weatherIcon, cloudiness, precipitation);
         } catch (Exception e) {
             logger.error("Ошибка получения данных о погоде", e);
@@ -53,6 +59,7 @@ public class WeatherService {
         }
     }
 
+    // Метод получения прогноза погоды по названию города
     public ForecastData[] getForecastByCity(String city) throws CityNotFoundException {
         try {
             String urlStr = FORECAST_URL + "?q=" + URLEncoder.encode(city, "UTF-8") + "&appid=" + API_KEY + "&units=metric";
@@ -87,7 +94,7 @@ public class WeatherService {
         }
     }
 
-
+    // Метод для выполнения вызова API и обработки ответа
     private JsonObject makeApiCall(String urlStr) throws Exception {
         URL url = new URL(urlStr);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();

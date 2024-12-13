@@ -39,6 +39,7 @@ public class CitySuggestionService {
                     return; // Обработка ошибок, если необходимо
                 }
 
+                // Считываем ответ от API
                 BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 StringBuilder response = new StringBuilder();
                 String inputLine;
@@ -48,6 +49,7 @@ public class CitySuggestionService {
                 }
                 in.close();
 
+                // Разбираем JSON-ответ
                 JsonArray jsonArray = JsonParser.parseString(response.toString()).getAsJsonArray();
                 List<String> newSuggestions = new ArrayList<>();
 
@@ -59,6 +61,7 @@ public class CitySuggestionService {
                     return;
                 }
 
+                // Обрабатываем каждый результат из массива
                 for (int i = 0; i < jsonArray.size(); i++) {
                     JsonObject cityObj = jsonArray.get(i).getAsJsonObject();
                     String cityName = cityObj.get("name").getAsString();
@@ -67,8 +70,8 @@ public class CitySuggestionService {
 
                     // Проверяем, если город уже добавлен в список предложений
                     if (!suggestedCities.contains(fullCity)) {
-                        newSuggestions.add(fullCity);
-                        suggestedCities.add(fullCity);
+                        newSuggestions.add(fullCity); // Добавляем в новый список предложений
+                        suggestedCities.add(fullCity); // Сохраняем в набор предложенных городов
                     }
                 }
 

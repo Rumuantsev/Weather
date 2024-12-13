@@ -29,7 +29,7 @@ public class WeatherController {
     @FXML
     private ImageView weatherIcon;
     @FXML
-    private HBox forecastHBox; // Изменено на HBox
+    private HBox forecastHBox;
 
     private WeatherService weatherService = new WeatherService();
     private DatabaseUtil databaseUtil = new DatabaseUtil();
@@ -48,6 +48,7 @@ public class WeatherController {
         });
     }
 
+    //Предлагает список городов на основе введенного текста.
     @FXML
     public void suggestCities(String query) {
         if (query != null && !query.trim().isEmpty()) {
@@ -57,6 +58,7 @@ public class WeatherController {
         }
     }
 
+    //метод для выполнения запроса на получение данных о погоде
     @FXML
     public void searchWeather() {
         String city = cityComboBox.getValue();
@@ -79,6 +81,7 @@ public class WeatherController {
         }
     }
 
+    //Отображает текущую информацию о погоде
     private void displayWeatherInfo(WeatherData weatherData) {
         String weatherInfo = String.format(
                 "Температура: %.1f°C\n" +
@@ -109,6 +112,7 @@ public class WeatherController {
         weatherIcon.setImage(image);
     }
 
+    //Отображает текущую информацию о погоде
     private void displayForecast(ForecastData[] forecastDataArray) {
         forecastHBox.getChildren().clear(); // Очистка HBox перед добавлением новых элементов
 
@@ -176,6 +180,7 @@ public class WeatherController {
                 forecastData.getMinTemperature());
     }
 
+    //Отображает прогноз на несколько дней
     private List<ForecastData> getDailyForecast(ForecastData[] forecastDataArray) {
         LocalDate tomorrow = LocalDate.now().plusDays(1); // Завтрашний день
 
