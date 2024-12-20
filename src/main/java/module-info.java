@@ -8,10 +8,12 @@ module org.example.weather {
 
     opens org.example.weather to javafx.fxml;
     exports org.example.weather;
-    exports org.example.weather.domain;
-    opens org.example.weather.domain to javafx.fxml;
-    exports org.example.weather.usecases;
-    opens org.example.weather.usecases to javafx.fxml;
-    exports org.example.weather.controllers;
-    opens org.example.weather.controllers to javafx.fxml;
+    exports org.example.weather.data;
+    opens org.example.weather.data to javafx.fxml;
+    exports org.example.weather.UI;
+    opens org.example.weather.UI to javafx.fxml;
+    exports org.example.weather.data.modals;
+    opens org.example.weather.data.modals to javafx.fxml;
+    exports org.example.weather.exceptions;
+    opens org.example.weather.exceptions to javafx.fxml;
 }

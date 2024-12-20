@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.weather.UI.WeatherController"  alignment="CENTER" style="-fx-background-color: red; -fx-padding: 20;">
+    <HBox spacing="10" alignment="CENTER" >
+        <ComboBox fx:id="cityComboBox" promptText="Введите город" editable="true" style="-fx-background-color: #444444; -fx-text-fill: black;" />
+        <Button text="Запрос" onAction="#searchWeather" style="-fx-background-color: #ffffff; -fx-text-fill: black;" />
+    </HBox>
+    <Label text="Текущая погода:" style="-fx-text-fill: white; -fx-font-size: 20px;" />
+    <HBox spacing="20" alignment="CENTER" style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 10; -fx-border-color: black; -fx-border-width: 2; -fx-border-radius: 10;">
+        <Label fx:id="weatherInfoLabel" wrapText="true" style="-fx-text-fill: black;" />
+        <ImageView fx:id="weatherIcon" fitWidth="100" fitHeight="100" preserveRatio="true"/>
+    </HBox>
+
+    <Label text="Прогноз погоды:" style="-fx-text-fill: white; -fx-font-size: 20px;" />
+    <VBox fx:id="forecastVBox" spacing="20" alignment="CENTER" style="-fx-background-color: red; -fx-padding: 10;">
+    </VBox>
+</VBox>
